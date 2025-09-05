@@ -216,7 +216,7 @@ map.set(key, {
 export default function MOLLIUAPrice({
   feedUrl,
   mapFields,
-  brand = { primary: "#E30613" },
+  brand = { primary: "#f1101fff" },
 }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading]   = useState(true);

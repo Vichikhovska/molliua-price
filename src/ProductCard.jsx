@@ -16,10 +16,10 @@ export default function ProductCard({
   onOpen,
 }) {
   return (
-    <div style={{ border:'1px solid #2a2a2a', borderRadius:12, padding:14, background:'#181818' }}>
+    <div style={{ border:'1px solid #1e1d1dff', borderRadius:12, padding:14, background:'#181818' }}>
       {/* верхній рядок */}
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
-        <div style={{ fontSize:12, color:'#bbb' }}>{p.category}</div>
+        <div style={{ fontSize:12, color:'#bbb' }}>{p.categoryTitle}</div>
         <span style={{ fontSize:12, padding:'2px 8px', borderRadius:999, background:badge.color, color:'#111', fontWeight:700 }}>
           {badge.label}
         </span>

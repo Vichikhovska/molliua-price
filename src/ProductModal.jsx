@@ -51,7 +51,7 @@ export default function ProductModal({
             )}
           </div>
 
-          {/* опис + мета */}
+          {/* опис +мета */}
           <div>
             {product.notes && (
               <div style={{ color:'#ddd', whiteSpace:'pre-wrap' }}>{product.notes}</div>
