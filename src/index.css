@@ -12,7 +12,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-/* олплодлж */
+
 a {
   font-weight: 500;
   color: #6a70e2;
@@ -44,7 +44,7 @@ button {
   font-family: inherit;
   background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: border-color 0.26s;
 }
 button:hover {
   border-color: #646cff;
