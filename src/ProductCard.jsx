@@ -5,7 +5,9 @@ export default function ProductCard({
   priceMode,
   selectedSize,
   selectedColor,
+  selectedClass,
   availColors,
+  availClasses,
   variant: v,
   price,
   badge,
@@ -13,42 +15,106 @@ export default function ProductCard({
   brand,
   onSelectSize,
   onSelectColor,
+  onSelectClass,
   onOpen,
 }) {
+  const chipStyle = {
+    padding: '6px 10px',
+    borderRadius: 999,
+    border: '1px solid #333',
+    background: '#222',
+    color: '#fff',
+    cursor: 'pointer',
+    fontSize: 12
+  };
+
+  // акуратна картка з заокругленнями
+  const cardStyle = {
+    border: '1px solid #1e1d1d',
+    borderRadius: 16,
+    background: '#181818',
+    overflow: 'hidden',            // щоб верхнє фото теж мало округлені кути
+    padding: 14
+  };
+
+  // контейнер фото: 200px висоти; якщо картинка висока — скролимо всередині
+  const photoWrapStyle = {
+    height: 'max-content',
+    background: '#090909ff',
+    borderRadius: 12,
+    overflow: 'hidden',            // обрізає кути
+    marginBottom: 10,
+    cursor: 'zoom-in',
+    display: 'grid',
+    placeItems: 'center'
+  };
+
+  // внутрішній скрол-контейнер, щоб скрол був саме в картці
+  const photoScrollStyle = {
+    width: 'max-contant',
+    height: 'max-content',
+    display: 'grid',
+    placeItems: 'center',
+    overflow: 'hidden'
+  };
+
+  // саме зображення:
+  // - за замовчуванням займає всю ширину (щоб не було горизонтального скролу)
+  // - висота авто: якщо дуже високе — воно стане вищим за 200px і піде вертикальний скрол усередині
+  // - якщо хочеш "вписувати без скролу" — заміни стилі на objectFit:'contain', maxHeight:'100%'
+  const imgStyle = {
+  maxWidth: '100%',
+  maxHeight: '100%',
+  width: 'auto',
+  height: 'auto',
+  objectFit: 'contain',
+  display: 'block'
+};
+
+
+  const mainPhoto = ((v.photos && v.photos[0]) || (p.photos && p.photos[0])) || null;
+
   return (
-    <div style={{ border:'1px solid #1e1d1dff', borderRadius:12, padding:14, background:'#181818' }}>
+    <div style={cardStyle}>
       {/* верхній рядок */}
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
-        <div style={{ fontSize:12, color:'#bbb' }}>{p.categoryTitle}</div>
-        <span style={{ fontSize:12, padding:'2px 8px', borderRadius:999, background:badge.color, color:'#111', fontWeight:700 }}>
+        <div style={{ fontSize:12, color:'#bbb' }}>{p.category}</div>
+        <span style={{ fontSize:12, padding:'2px 8px', borderRadius:999, background:badge.color, color:'#060606ff', fontWeight:700 }}>
           {badge.label}
         </span>
       </div>
 
-      {/* фото — фіксована висота, картка кликабельна */}
-      <div onClick={onOpen}
-           style={{ aspectRatio:'4/3', background:'#0f0f10', borderRadius:10, overflow:'hidden', marginBottom:10, cursor:'zoom-in' }}>
-        { ((v.photos&&v.photos[0]) || (p.photos&&p.photos[0])) ? (
-          <img src={(v.photos&&v.photos[0]) || p.photos[0]} alt={p.name}
-               style={{ width:'100%', height:'100%', objectFit:'cover' }} />
+      {/* фото — компактне, клікабельне, з внутрішнім скролом при потребі */}
+      <div style={photoWrapStyle} onClick={onOpen}>
+        {mainPhoto ? (
+          <div style={photoScrollStyle}>
+            <img
+              src={mainPhoto}
+              alt={p.name}
+              loading='lazy'
+              style={imgStyle}
+            />
+          </div>
         ) : (
-          <div style={{display:'grid', placeItems:'center', height:'100%', color:'#666'}}>нема фото</div>
+          <div style={{ color:'#666' }}>нема фото</div>
         )}
       </div>
 
       {/* назва */}
-      <div style={{ fontWeight:700, lineHeight:1.25, minHeight:40 }}>{p.name}</div>
+      <div style={{ fontWeight:700, lineHeight:1.25, minHeight:40, cursor:'pointer' }} onClick={onOpen}>
+        {p.name}
+      </div>
       {v.sku && <div style={{ fontSize:12, color:'#aaa', marginTop:4 }}>SKU: {v.sku}</div>}
 
       {/* розміри */}
       {!!p.sizes.length && (
         <div style={{ marginTop:10, display:'flex', gap:6, flexWrap:'wrap' }}>
-          {p.sizes.map(s=>(
-            <button key={s||"_"} onClick={()=>{
-                onSelectSize(s);
-              }}
-              style={{ padding:'6px 10px', borderRadius:999, border:'1px solid #333',
-                       background: (selectedSize===s) ? '#E30613' : '#222', color:'#fff', cursor:'pointer', fontSize:12 }}>
+          {p.sizes.map(s => (
+            <button
+              key={s || "_"}
+              onClick={() => onSelectSize(s)}
+              style={{ ...chipStyle, background: (selectedSize === s) ? '#090909ff' : '#222' }}
+            >
               {s || "—"}
             </button>
           ))}
@@ -58,20 +124,36 @@ export default function ProductCard({
       {/* кольори */}
       {!!availColors.length && (
         <div style={{ marginTop:8, display:'flex', gap:6, flexWrap:'wrap' }}>
-          {availColors.map(c=>(
-            <button key={c||"_"} onClick={()=>onSelectColor(c)}
-              style={{ padding:'6px 10px', borderRadius:999, border:'1px solid #333',
-                       background: (selectedColor===c) ? '#E30613' : '#222', color:'#fff', cursor:'pointer', fontSize:12 }}>
+          {availColors.map(c => (
+            <button
+              key={c || "_"}
+              onClick={() => onSelectColor(c)}
+              style={{ ...chipStyle, background: (selectedColor === c) ? '#E30613' : '#222' }}
+            >
               {c || "—"}
             </button>
           ))}
         </div>
       )}
 
-      {/* Ціни (вертикально) */}
+      {/* Клас захисту */}
+      {!!(availClasses && availClasses.length) && (
+        <div style={{ marginTop:8, display:'flex', gap:6, flexWrap:'wrap' }}>
+          {availClasses.map(k => (
+            <button
+              key={k || "_"}
+              onClick={() => onSelectClass(k)}
+              style={{ ...chipStyle, background: (selectedClass === k) ? '#E30613' : '#222' }}
+            >
+              {k || "—"}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* ціни (вертикально) */}
       <div style={{ display:'flex', flexDirection:'column', gap:4, marginTop:10 }}>
         <div style={{ fontWeight:800, fontSize:18 }}>{fmt(price)} ₴</div>
-
         {priceMode!=="retail" && v.priceRetail  !== undefined && (
           <div style={{ fontSize:12, color:'#aaa' }}>роздріб: {fmt(v.priceRetail)} ₴</div>
         )}
