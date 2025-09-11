@@ -169,3 +169,18 @@ button:focus-visible {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
+
+.contacts {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+@media (max-width: 500px) {
+  .contacts {
+    flex-direction: column; /* телефони та сайт підряд */
+    align-items: flex-start;
+    gap: 6px;
+    margin-top: 8px;
+  }
+}

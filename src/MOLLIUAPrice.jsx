@@ -313,7 +313,7 @@ export default function MOLLIUAPrice({
     <img src={logoUrl} alt="MOLLI" style={{ height:50, display:'block' }} />
   </div>
 
-  <div style={{display:'flex', gap:20, alignItems:'center', fontSize:14}}>
+  <div className="contacts" style={{display:'flex', gap:20, alignItems:'center', fontSize:14}}>
     {/* Номер 1 */}
     <div style={{display:'flex', alignItems:'center', gap:6}}>
       <a href="tel:+380962019665" style={topLink}>+380 96 201 96 65</a>
