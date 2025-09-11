@@ -76,7 +76,7 @@ button:focus-visible {
 @media (max-width: 900px) {
   .molli-topbar {
     flex-direction: column;
-    align-items: flex-start !important;
+    align-items: center !important;
     gap: 8px !important;
   }
   .molli-topbar a { font-size: 13px !important; }
@@ -114,6 +114,8 @@ button:focus-visible {
   .molli-card-title { min-height: 0 !important; }
 }
 
+
+
 /* фото в картці: фіксована висота, cover; на дуже вузьких — трохи нижче 
 .molli-card-photo {
   height: 200px !important;
@@ -148,9 +150,7 @@ button:focus-visible {
     grid-template-columns: 1fr !important; /* фото над описом */
     gap: 12px !important;
   }
-  .molli-modal-hero > div {
-    height: 58vh !important;      /* висота блоку під фото */
-  }
+
 }
 
 /* горизонтальна стрічка мініатюр у модалці */
@@ -165,7 +165,6 @@ button:focus-visible {
 
 /* дрібні покращення натискання для тачу */
 .molli button, .molli a {
-  min-height: 36px;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
@@ -179,8 +178,7 @@ button:focus-visible {
 @media (max-width: 500px) {
   .contacts {
     flex-direction: column; /* телефони та сайт підряд */
-    align-items: flex-start;
+    align-items: center;
     gap: 6px;
-    margin-top: 8px;
   }
 }
