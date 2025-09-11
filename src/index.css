@@ -172,7 +172,7 @@ button:focus-visible {
 
 .contacts {
   display: flex;
-  gap: 14px;
+  gap: 5px;
   align-items: center;
 }
 
