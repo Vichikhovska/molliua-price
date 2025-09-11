@@ -22,7 +22,7 @@ export default function ProductModal({
   const photos = product?.photos || [];
 
   return (
-    <div
+    <div className="molli-modal"
       onClick={onClose}
       style={{
         position: "fixed",
@@ -33,7 +33,7 @@ export default function ProductModal({
         zIndex: 50,
       }}
     >
-      <div
+      <div className="molli-modal-inner"
         onClick={(e) => e.stopPropagation()}
         style={{
           width: "min(1100px, 96vw)",
@@ -73,7 +73,7 @@ export default function ProductModal({
         </div>
 
         {/* Scrollable body */}
-        <div
+        <div className="molli-modal-body"
           style={{
             flex: "1 1 auto",           // <-- займає весь простір
             overflowY: "auto",          // <-- СКРОЛ ТУТ
@@ -89,7 +89,7 @@ export default function ProductModal({
             }}
           >
             {/* велике фото без обрізання */}
-            <div>
+            <div className="molli-modal-hero">
               <div
                 style={{
                   background: "#000",
@@ -132,7 +132,7 @@ export default function ProductModal({
           </div>
 
           {/* thumbs (також у скрол-зоні) */}
-          <div
+          <div className="molli-modal-thumbs"
             style={{
               marginTop: 12,
               padding: "10px 0",

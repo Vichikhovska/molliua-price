@@ -66,3 +66,106 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* ====== базове вирівнювання для мобіли ====== */
+.molli {
+  padding: 16px;
+}
+
+/* топбар: у стовпчик на вузьких, іконки/номери переносяться */
+@media (max-width: 900px) {
+  .molli-topbar {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+  .molli-topbar a { font-size: 13px !important; }
+}
+
+/* категорії — горизонтальний скрол одним рядком */
+.molli-cats {
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+}
+.molli-cats::-webkit-scrollbar { display: none; }
+
+/* сітка карток: 1 колонка на вузьких, 2 на середніх */
+.molli-grid {
+  display: grid;
+  grid-template-columns: repeat( auto-fill, minmax(280px, 1fr) );
+  gap: 16px;
+}
+@media (max-width: 740px) {
+  .molli-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+/* картка: м’якші відступи на мобілі */
+.molli-card {
+  border-radius: 14px;
+  overflow: hidden;
+}
+@media (max-width: 740px) {
+  .molli-card { padding: 12px !important; }
+  .molli-card-title { min-height: 0 !important; }
+}
+
+/* фото в картці: фіксована висота, cover; на дуже вузьких — трохи нижче 
+.molli-card-photo {
+  height: 200px !important;
+}*/
+.molli-card-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+@media (max-width: 400px) {
+  .molli-card-photo { height: 180px !important; }
+}
+
+/* модалка: на мобілі — повний екран, контент у стовпчик */
+@media (max-width: 900px) {
+  .molli-modal { place-items: stretch !important; }
+  .molli-modal-inner {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-height: none !important;
+    border-radius: 0 !important;
+    display: grid !important;
+    grid-template-rows: auto 1fr !important; /* шапка фікс., тіло скролиться */
+  }
+  .molli-modal-body {
+    overflow-y: auto !important;
+    padding: 12px !important;
+  }
+  .molli-modal-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important; /* фото над описом */
+    gap: 12px !important;
+  }
+  .molli-modal-hero > div {
+    height: 58vh !important;      /* висота блоку під фото */
+  }
+}
+
+/* горизонтальна стрічка мініатюр у модалці */
+.molli-modal-thumbs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.molli-modal-thumbs::-webkit-scrollbar { height: 6px; }
+.molli-modal-thumbs img { flex: 0 0 auto; }
+
+/* дрібні покращення натискання для тачу */
+.molli button, .molli a {
+  min-height: 36px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}

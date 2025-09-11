@@ -75,7 +75,7 @@ export default function ProductCard({
   const mainPhoto = ((v.photos && v.photos[0]) || (p.photos && p.photos[0])) || null;
 
   return (
-    <div style={cardStyle}>
+    <div className="molli-card" style={cardStyle}>
       {/* верхній рядок */}
       <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
         <div style={{ fontSize:12, color:'#bbb' }}>{p.category}</div>
@@ -85,7 +85,7 @@ export default function ProductCard({
       </div>
 
       {/* фото — компактне, клікабельне, з внутрішнім скролом при потребі */}
-      <div style={photoWrapStyle} onClick={onOpen}>
+      <div className="molli-card-photo" style={photoWrapStyle} onClick={onOpen}>
         {mainPhoto ? (
           <div style={photoScrollStyle}>
             <img
@@ -101,7 +101,7 @@ export default function ProductCard({
       </div>
 
       {/* назва */}
-      <div style={{ fontWeight:700, lineHeight:1.25, minHeight:40, cursor:'pointer' }} onClick={onOpen}>
+      <div className="molli-card-title" style={{ fontWeight:700, lineHeight:1.25, minHeight:40, cursor:'pointer' }} onClick={onOpen}>
         {p.name}
       </div>
       {v.sku && <div style={{ fontSize:12, color:'#aaa', marginTop:4 }}>SKU: {v.sku}</div>}

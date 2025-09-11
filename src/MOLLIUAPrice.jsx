@@ -306,9 +306,9 @@ export default function MOLLIUAPrice({
   const topLink = { color:'#fff', textDecoration:'none', opacity:.9 };
 
   return (
-    <div style={{ padding: 20, color:'#fbf7f7ff', background:'#111', minHeight:'100vh', fontFamily:"system-ui, -apple-system, Segoe UI, Roboto" }}>
+    <div className="molli" style={{ padding: 20, color:'#fbf7f7ff', background:'#111', minHeight:'100vh', fontFamily:"system-ui, -apple-system, Segoe UI, Roboto" }}>
    {/* TOP BAR */}
-<div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12 }}>
+<div className="molli-topbar" style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:12 }}>
   <div style={{ display:'flex', alignItems:'center', gap:10 }}>
     <img src={logoUrl} alt="MOLLI" style={{ height:50, display:'block' }} />
   </div>
@@ -351,7 +351,7 @@ export default function MOLLIUAPrice({
 
 
       {/* панель фільтрів */}
-      <div style={{ display:'flex', gap:10, flexWrap:'wrap', margin:'14px 0 16px', alignItems:'center' }}>
+      <div className="molli-cats" style={{ display:'flex', gap:10, flexWrap:'wrap', margin:'14px 0 16px', alignItems:'center' }}>
         <div style={{ display:'flex', gap:8, flexWrap:'wrap', flex:'1 1 auto' }}>
           {categories.map(c => (
             <button
@@ -398,7 +398,7 @@ export default function MOLLIUAPrice({
       {error && <div style={{ color:'#f66' }}>Помилка фіду: {String(error)}</div>}
 
       {/* сітка карток */}
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(280px, 1fr))', gap:16 }}>
+      <div className="molli-grid" style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(280px, 1fr))', gap:16 }}>
         {filtered.map((p)=>{
           const sizeSel  = selectedSize[p.id]  ?? (p.sizes[0]  || "");
           const availColors = p.colorsBySize[sizeSel || "_"] || p.colors;
