@@ -14,8 +14,8 @@ export default function App() {
         protectionClass: "Клас захисту",
         priceRetail: "Роздріб",
         priceDrop: "Дроп",
-        priceBulk: "Гурт 30+",
-        priceBuyout: "Викуп 100+",
+        priceBulk: "Гурт",
+        priceBuyout: "Викуп",
         stock: "Наявність",
         notes: "Опис",
       }}

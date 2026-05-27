@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 export default function ProductModal({
   product,
@@ -9,20 +9,11 @@ export default function ProductModal({
   brand,
   onClose,
 }) {
-  // === Гарячі клавіші: Esc / ← →
-  useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowLeft") prevImage?.();
-      if (e.key === "ArrowRight") nextImage?.();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose, prevImage, nextImage]);
-
   const photos = product?.photos || [];
+  const canPrev = photos.length > 1;
+  const canNext = photos.length > 1;
 
-  // === Breakpoint: коли ширина вікна < 900 → мобільний режим (колонка)
+  // === Breakpoint
   const [isNarrow, setIsNarrow] = useState(
     typeof window !== "undefined" ? window.innerWidth < 900 : false
   );
@@ -32,24 +23,36 @@ export default function ProductModal({
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // === Стилі для великого фото (без кропу) — спільні для обох режимів
+  // === Focus + клавіші всередині модалки
+  const dialogRef = useRef(null);
+  useEffect(() => {
+    dialogRef.current?.focus();
+  }, []);
+  const onKeyDown = (e) => {
+    if (e.key === "Escape") onClose();
+    if (e.key === "ArrowLeft") prevImage?.();
+    if (e.key === "ArrowRight") nextImage?.();
+  };
+
+  // === Styles
   const bigImageWrapStyle = {
     background: "#000",
     borderRadius: 10,
     overflow: "hidden",
     display: "grid",
     placeItems: "center",
-    // висота блоку з фото: трохи менша на мобільному
-    // height: isNarrow ? "60vh" : "70vh",
+    maxHeight: isNarrow ? "60dvh" : "70dvh",
   };
   const bigImageStyle = {
     maxWidth: "100%",
     maxHeight: "100%",
     width: "auto",
     height: "auto",
-    objectFit: "contain", // показуємо фото повністю, без обрізання
+    objectFit: "contain",
     display: "block",
   };
+
+  const headerId = "molli-modal-title";
 
   return (
     <div
@@ -65,19 +68,26 @@ export default function ProductModal({
       }}
     >
       <div
+        ref={dialogRef}
         className="molli-modal-inner"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={headerId}
+        tabIndex={-1}
+        onKeyDown={onKeyDown}
         onClick={(e) => e.stopPropagation()}
         style={{
           width: "min(1100px, 96vw)",
-          height: "92vh",              // фіксована висота діалогу
-          background: "#131313ff",
+          // стабільно на мобі: 100dvh; старі браузери — 92vh
+          height: "min(92vh, 100dvh)",
+          background: "#131313",
           borderRadius: 12,
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
         }}
       >
-        {/* === Header (назва червона — як було) === */}
+        {/* Header */}
         <div
           style={{
             flex: "0 0 auto",
@@ -85,10 +95,13 @@ export default function ProductModal({
             justifyContent: "space-between",
             alignItems: "center",
             padding: "10px 14px",
-            background: "#e43c3cff",
+            background: brand?.primary ?? "#e43c3c",
+            color: "#fff",
           }}
         >
-          <div style={{ fontWeight: 800 }}>{product?.name}</div>
+          <div id={headerId} style={{ fontWeight: 800 }}>
+            {product?.name}
+          </div>
           <button
             onClick={onClose}
             style={{
@@ -104,19 +117,15 @@ export default function ProductModal({
           </button>
         </div>
 
-        {/* === Тіло модалки: скролимо ТІЛЬКИ цю зону === */}
+        {/* Body (scroll only here) */}
         <div
           className="molli-modal-body"
-          style={{
-            flex: "1 1 auto",
-            overflowY: "auto", // скрол тут
-            padding: 14,
-          }}
+          style={{ flex: "1 1 auto", overflowY: "auto", padding: 14 }}
         >
-          {/* ДЕСКТОП (>=900px): дві колонки — фото | опис */}
           {!isNarrow ? (
             <>
               <div
+                className="molli-modal-grid"
                 style={{
                   display: "grid",
                   gridTemplateColumns: "1fr 320px",
@@ -124,7 +133,7 @@ export default function ProductModal({
                   alignItems: "start",
                 }}
               >
-                {/* велике фото */}
+                {/* Hero image */}
                 <div className="molli-modal-hero" style={{ position: "relative" }}>
                   <div style={bigImageWrapStyle}>
                     {photos[galleryIdx] ? (
@@ -133,14 +142,32 @@ export default function ProductModal({
                       <div style={{ color: "#666" }}>нема фото</div>
                     )}
                   </div>
+
+                  {/* overlay arrows */}
+                  {canPrev && (
+                    <button
+                      onClick={prevImage}
+                      aria-label="Попереднє фото"
+                      style={navBtnStyle("left")}
+                    >
+                      ‹
+                    </button>
+                  )}
+                  {canNext && (
+                    <button
+                      onClick={nextImage}
+                      aria-label="Наступне фото"
+                      style={navBtnStyle("right")}
+                    >
+                      ›
+                    </button>
+                  )}
                 </div>
 
-                {/* опис */}
+                {/* Description */}
                 <div>
                   {product?.notes && (
-                    <div
-                      style={{ color: "#ddd", whiteSpace: "pre-wrap", lineHeight: 1.5 }}
-                    >
+                    <div style={{ color: "#ddd", whiteSpace: "pre-wrap", lineHeight: 1.5 }}>
                       {product.notes}
                     </div>
                   )}
@@ -150,48 +177,20 @@ export default function ProductModal({
                 </div>
               </div>
 
-              {/* мініатюри знизу (горизонтальний скрол, як було) */}
-              <div
-                className="molli-modal-thumbs"
-                style={{
-                  marginTop: 12,
-                  padding: "10px 0",
-                  background: "#141414",
-                  borderRadius: 8,
-                  display: "flex",
-                  gap: 8,
-                  overflowX: "auto",
-                }}
-              >
-                {photos.map((u, i) => (
-                  <img
-                    key={i}
-                    src={u}
-                    onClick={() => setGalleryIdx(i)}
-                    style={{
-                      width: 80,
-                      height: 60,
-                      objectFit: "cover",
-                      borderRadius: 6,
-                      cursor: "pointer",
-                      outline:
-                        galleryIdx === i
-                          ? `2px solid ${brand?.primary || "#141414"}`
-                          : "none",
-                    }}
-                  />
-                ))}
-              </div>
+              {/* Thumbs */}
+              <Thumbs
+                photos={photos}
+                activeIndex={galleryIdx}
+                setGalleryIdx={setGalleryIdx}
+                brand={brand}
+              />
             </>
           ) : (
-            // МОБІЛЬНИЙ (<900px): все в колонку — ОПИС → ФОТО → ТИЗЕРИ
             <>
-              {/* 1) опис */}
+              {/* Description */}
               <div style={{ marginBottom: 12 }}>
                 {product?.notes && (
-                  <div
-                    style={{ color: "#ddd", whiteSpace: "pre-wrap", lineHeight: 1.5 }}
-                  >
+                  <div style={{ color: "#ddd", whiteSpace: "pre-wrap", lineHeight: 1.5 }}>
                     {product.notes}
                   </div>
                 )}
@@ -200,7 +199,7 @@ export default function ProductModal({
                 </div>
               </div>
 
-              {/* 2) велике фото */}
+              {/* Hero image */}
               <div className="molli-modal-hero" style={{ position: "relative" }}>
                 <div style={bigImageWrapStyle}>
                   {photos[galleryIdx] ? (
@@ -209,44 +208,95 @@ export default function ProductModal({
                     <div style={{ color: "#666" }}>нема фото</div>
                   )}
                 </div>
+
+                {canPrev && (
+                  <button
+                    onClick={prevImage}
+                    aria-label="Попереднє фото"
+                    style={navBtnStyle("left")}
+                  >
+                    ‹
+                  </button>
+                )}
+                {canNext && (
+                  <button
+                    onClick={nextImage}
+                    aria-label="Наступне фото"
+                    style={navBtnStyle("right")}
+                  >
+                    ›
+                  </button>
+                )}
               </div>
 
-              {/* 3) мініатюри */}
-              <div
-                className="molli-modal-thumbs"
-                style={{
-                  marginTop: 12,
-                  padding: "10px 0",
-                  background: "#141414",
-                  borderRadius: 8,
-                  display: "flex",
-                  gap: 8,
-                  overflowX: "auto",
-                }}
-              >
-                {photos.map((u, i) => (
-                  <img
-                    key={i}
-                    src={u}
-                    onClick={() => setGalleryIdx(i)}
-                    style={{
-                      width: 80,
-                      height: 60,
-                      objectFit: "cover",
-                      borderRadius: 6,
-                      cursor: "pointer",
-                      outline:
-                        galleryIdx === i
-                          ? `2px solid ${brand?.primary || "#141414"}`
-                          : "none",
-                    }}
-                  />
-                ))}
-              </div>
+              {/* Thumbs */}
+              <Thumbs
+                photos={photos}
+                activeIndex={galleryIdx}
+                setGalleryIdx={setGalleryIdx}
+                brand={brand}
+              />
             </>
           )}
         </div>
       </div>
     </div>
   );
+}
+
+function Thumbs({ photos, activeIndex, setGalleryIdx, brand }) {
+  return (
+    <div
+      className="molli-modal-thumbs"
+      style={{
+        marginTop: 12,
+        padding: "10px 0",
+        background: "#141414",
+        borderRadius: 8,
+        display: "flex",
+        gap: 8,
+        overflowX: "auto",
+      }}
+    >
+      {photos.map((u, i) => (
+        <img
+          key={i}
+          src={u}
+          alt={`Зображення ${i + 1}`}
+          onClick={() => setGalleryIdx(i)}
+          aria-current={activeIndex === i ? "true" : undefined}
+          style={{
+            width: 80,
+            height: 60,
+            objectFit: "cover",
+            borderRadius: 6,
+            cursor: "pointer",
+            outline:
+              activeIndex === i
+                ? `2px solid ${brand?.primary || "#fff"}`
+                : "none",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function navBtnStyle(side) {
+  return {
+    position: "absolute",
+    top: "50%",
+    transform: "translateY(-50%)",
+    [side]: 8,
+    background: "rgba(0,0,0,.5)",
+    color: "#fff",
+    border: "1px solid #333",
+    width: 36,
+    height: 36,
+    borderRadius: 999,
+    display: "grid",
+    placeItems: "center",
+    cursor: "pointer",
+    userSelect: "none",
+  };
 }
